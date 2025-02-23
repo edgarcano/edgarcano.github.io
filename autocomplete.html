@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Latin Music Database</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      background: #f8f8f8;
+    }
+    h1 {
+      text-align: center;
+    }
+    .search-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    input[type="text"] {
+      width: 300px;
+      padding: 8px;
+      font-size: 16px;
+    }
+    select {
+      padding: 8px;
+      margin-left: 10px;
+      font-size: 16px;
+    }
+    #songList {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 10px;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .song {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+    }
+    .song:last-child {
+      border-bottom: none;
+    }
+    .song-details {
+      flex: 1;
+    }
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Latin Music Database</h1>
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search for a song or artist...">
+    <label for="sort">Sort by:</label>
+    <select id="sort">
+      <option value="song">Song Name</option>
+      <option value="artist">Artist</option>
+    </select>
+  </div>
+  <div id="songList">
+    <!-- Songs will be rendered here -->
+  </div>
+
+  <script>
+    // Array of 100 sample Latin songs
+    const songs = [
+    { song: "El Reloj", artist: "Trío Los Panchos" },
+    { song: "Sabor a Mí", artist: "Los Panchos" },
+    { song: "La Llorona", artist: "Chavela Vargas" },
+    { song: "Gracias a la Vida", artist: "Violeta Parra" },
+    { song: "Alfonsina y el Mar", artist: "Mercedes Sosa" },
+    { song: "Contigo en la Distancia", artist: "Lucho Gatica" },
+    { song: "Cucurrucucú Paloma", artist: "Tomás Méndez" },
+    { song: "La Flor de la Canela", artist: "Chabuca Granda" },
+    { song: "Piel Canela", artist: "Bobby Capó" },
+    { song: "Lágrimas Negras", artist: "Trío Matamoros" },
+    { song: "Sombras", artist: "Javier Solís" },
+    { song: "El Breve Espacio en Que No Estás", artist: "Pablo Milanés" },
+    { song: "Yolanda", artist: "Pablo Milanés" },
+    { song: "Para Vivir", artist: "Pablo Milanés" },
+    { song: "Te Recuerdo Amanda", artist: "Víctor Jara" },
+    { song: "El Necio", artist: "Silvio Rodríguez" },
+    { song: "Ojalá", artist: "Silvio Rodríguez" },
+    { song: "Unicornio", artist: "Silvio Rodríguez" },
+    { song: "Mi Unicornio Azul", artist: "Silvio Rodríguez" },
+    { song: "Playa Girón", artist: "Silvio Rodríguez" },
+    { song: "Balderrama", artist: "Mercedes Sosa" },
+    { song: "Duerme Negrito", artist: "Mercedes Sosa" },
+    { song: "Sólo Le Pido a Dios", artist: "León Gieco" },
+    { song: "Zamba Para Olvidarte", artist: "Jorge Cafrune" },
+    { song: "Callejón de los Milagros", artist: "Armando Manzanero" },
+    { song: "Esta Tarde Vi Llover", artist: "Armando Manzanero" },
+    { song: "No Sé Tú", artist: "Armando Manzanero" },
+    { song: "Mía", artist: "Armando Manzanero" },
+    { song: "Somos Novios", artist: "Armando Manzanero" },
+    { song: "Nos Hizo Falta Tiempo", artist: "Armando Manzanero" },
+    { song: "Adoro", artist: "Armando Manzanero" },
+    { song: "Si Me Tenías", artist: "Gian Marco" },
+    { song: "Hoy", artist: "Gian Marco" },
+    { song: "Lamento Boliviano", artist: "Enanitos Verdes" },
+    { song: "Tus Viejas Cartas", artist: "Los Enanitos Verdes" },
+    { song: "Aún Sigo Cantando", artist: "Los Enanitos Verdes" },
+    { song: "Mariposa Tecknicolor", artist: "Fito Páez" },
+    { song: "11 y 6", artist: "Fito Páez" },
+    { song: "Al Lado del Camino", artist: "Fito Páez" },
+    { song: "Te Vi Venir", artist: "Sin Bandera" },
+    { song: "Kilómetros", artist: "Sin Bandera" },
+    { song: "Mientes Tan Bien", artist: "Sin Bandera" },
+    { song: "Avientame", artist: "Café Tacvba" },
+    { song: "Eres", artist: "Café Tacvba" },
+    { song: "Cómo Te Extraño Mi Amor", artist: "Leo Dan" },
+    { song: "Mary Es Mi Amor", artist: "Leo Dan" },
+    { song: "Raquel", artist: "Leo Dan" },
+    { song: "Guitarras, Lloren Guitarras", artist: "Vicente Fernández" },
+    { song: "La Diferencia", artist: "Vicente Fernández" },
+    { song: "Amor Eterno", artist: "Rocío Dúrcal" },
+    { song: "Se Me Olvidó Otra Vez", artist: "Juan Gabriel" },
+    { song: "Querida", artist: "Juan Gabriel" },
+    { song: "Hasta Que Te Conocí", artist: "Juan Gabriel" },
+    { song: "Amor del Bueno", artist: "Reyli Barba" },
+    { song: "No Era Necesario", artist: "Reyli Barba" },
+    { song: "Juro", artist: "Edgar Oceransky" },
+    { song: "Hasta la Camisa", artist: "Raúl Ornelas" },
+    { song: "Mi Historia Entre Tus Dedos", artist: "Gianluca Grignani" },
+    { song: "Bésame Mucho", artist: "Consuelo Velázquez" },
+    { song: "Historia de un Amor", artist: "Carlos Eleta Almarán" },
+    { song: "Espinita", artist: "Los Panchos" },
+    { song: "No Volveré", artist: "Pedro Infante" },
+    { song: "Sin Un Amor", artist: "Los Panchos" },
+    { song: "Cien Años", artist: "Pedro Infante" },
+    { song: "Peregrina", artist: "Guty Cárdenas" },
+    { song: "Qué Te Ha Dado Esa Mujer", artist: "Pedro Infante" },
+    { song: "Malagueña Salerosa", artist: "Miguel Aceves Mejía" },
+    { song: "Las Mañanitas", artist: "Pedro Infante" },
+    { song: "Deja Que Salga La Luna", artist: "José Alfredo Jiménez" },
+    { song: "Ella", artist: "José Alfredo Jiménez" },
+    { song: "Si Nos Dejan", artist: "José Alfredo Jiménez" },
+    { song: "El Jinete", artist: "José Alfredo Jiménez" },
+    { song: "Caminos de Guanajuato", artist: "José Alfredo Jiménez" },
+    { song: "La Media Vuelta", artist: "José Alfredo Jiménez" },
+    { song: "Cuando Vivas Conmigo", artist: "Carlos Varela" },
+    { song: "Habáname", artist: "Carlos Varela" },
+    { song: "Muros y Puertas", artist: "Carlos Varela" },
+    { song: "Monedas al Aire", artist: "Carlos Varela" },
+    { song: "Quiéreme Mucho", artist: "Gonzalo Roig" },
+    { song: "Noche de Ronda", artist: "Agustín Lara" },
+    { song: "Solamente una Vez", artist: "Agustín Lara" },
+    { song: "María Bonita", artist: "Agustín Lara" },
+    { song: "Piensa en Mí", artist: "Agustín Lara" },
+    { song: "Reloj", artist: "Luis Miguel" },
+    { song: "Sabes una Cosa", artist: "Luis Miguel" },
+    { song: "La Barca", artist: "Luis Miguel" },
+    { song: "Contigo Aprendí", artist: "Luis Miguel" },
+    { song: "Por Debajo de la Mesa", artist: "Luis Miguel" },
+    { song: "Échame a Mí la Culpa", artist: "Alberto Vázquez" },
+    { song: "Vereda Tropical", artist: "Los Panchos" }
+    ];
+
+    const searchInput = document.getElementById('search');
+    const sortSelect = document.getElementById('sort');
+    const songListDiv = document.getElementById('songList');
+
+    function renderSongs() {
+      const query = searchInput.value.toLowerCase();
+      const sortBy = sortSelect.value;
+      // Filter songs by song title or artist name
+      let filteredSongs = songs.filter(s => 
+        s.song.toLowerCase().includes(query) || s.artist.toLowerCase().includes(query)
+      );
+      
+      // Sort based on selection (song or artist)
+      filteredSongs.sort((a, b) => {
+        if(a[sortBy].toLowerCase() < b[sortBy].toLowerCase()) return -1;
+        if(a[sortBy].toLowerCase() > b[sortBy].toLowerCase()) return 1;
+        return 0;
+      });
+      
+      // Clear the list and display filtered songs
+      songListDiv.innerHTML = '';
+      filteredSongs.forEach(s => {
+        const songDiv = document.createElement('div');
+        songDiv.className = 'song';
+        
+        const detailsDiv = document.createElement('div');
+        detailsDiv.className = 'song-details';
+        detailsDiv.textContent = s.song + " - " + s.artist;
+        
+        const suggestButton = document.createElement('button');
+        suggestButton.textContent = 'suggest';
+        suggestButton.onclick = () => {
+          alert('Suggested: ' + s.song + " - " + s.artist);
+        };
+        
+        songDiv.appendChild(detailsDiv);
+        songDiv.appendChild(suggestButton);
+        songListDiv.appendChild(songDiv);
+      });
+    }
+
+    // Update list as user types or changes sort criteria
+    searchInput.addEventListener('input', renderSongs);
+    sortSelect.addEventListener('change', renderSongs);
+    
+    // Initial render of all songs
+    renderSongs();
+  </script>
+</body>
+</html>
